@@ -1,0 +1,15 @@
+stages:
+  - build
+
+build:
+  stage: build
+  image: docker:git
+  services:
+    - docker:dind
+  script:
+    - export VERSION=0.0.1
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build --build-arg APP_VERSION=$VERSION -t registry.gitlab.com/highimpact/mtsuite/mtsuites-backend-core:$VERSION -f Dockerfile .
+    - docker push registry.gitlab.com/highimpact/mtsuite/mtsuites-backend-core:$VERSION
+  only:
+    - tags
